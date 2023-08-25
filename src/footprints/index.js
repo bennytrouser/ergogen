@@ -2,6 +2,7 @@ module.exports = {
     alps: require('./alps'),
     button: require('./button'),
     choc: require('./choc'),
+    chockim: require('./chockim'),
     chocmini: require('./chocmini'),
     diode: require('./diode'),
     jstph: require('./jstph'),
@@ -17,4 +18,9 @@ module.exports = {
     slider: require('./slider'),
     trrs: require('./trrs'),
     via: require('./via'),
+    pcm12: require('./pcm12'),
+    b3u1000p: require('./b3u1000p'),
+    xiao: require('./xiao'),
+    xiao_smd: require('./xiao_smd'),
+    combo_diode: require('./combo_diode'),
 }

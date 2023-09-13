@@ -17,6 +17,7 @@ units:
   xiao_y: 21
   outx: 0.5capx +1  # Used for plate outlines
   outy: 0.5capy +1  # Used for plate outlines
+  mirshift: 31.3
 
 points:
   zones.matrix:
@@ -24,7 +25,7 @@ points:
       rotate: ring_splay + pinky_splay
     mirror:
       ref: matrix_inner_home
-      shift: 40
+      shift: mirshift
     key:
       width: capx
       height: capy
@@ -104,8 +105,12 @@ points:
         rows:
           top.skip: true
           bottom:
+            row_net: R1
+            mirror.row_net: MR1
             bind: [1,2,22.590471307,1]
           home:
+            row_net: R0
+            mirror.row_net: MR0
             bind: [1,2,20,1]
   zones.thumb:
     anchor:
@@ -114,7 +119,7 @@ points:
       rotate: -20
     mirror:
       ref: matrix_inner_home
-      shift: 40
+      shift: mirshift
     key:
       width: capx
       height: capy
@@ -146,7 +151,7 @@ points:
       rotate: 0
     mirror: 
       ref: matrix_inner_home
-      shift: 40
+      shift: mirshift
     key:
       name: mcu
       width: xiao_x
@@ -221,11 +226,23 @@ points:
         shift: [-0.0capy,.5]
     mirror: 
       ref: matrix_inner_home
-      shift: 40
+      shift: mirshift
     key:
       name: xiaocut
       height: xiao_y + 1
       width: 13
+  zones.battcut:
+    anchor:
+      - ref: mcu
+        shift: [-1, -24]
+    mirror:
+      ref: matrix_inner_home
+      shift: mirshift
+    key:
+      name: battcut
+      height: 22
+      width: 14.5
+
 
 outlines:
   _casecuts:
@@ -310,23 +327,66 @@ outlines:
     - what: circle
       where: /mount.*/
       radius: 1.1
-  _platecut:
-    - ^_keycapsbound
-    - _mcu_extra
-    - _mcu_extra_mirror
   _xiaocut:
     - what: rectangle
       where: /xiaocut/
       size: [13,xiao_y +1]
+    - what: rectangle
+      where: /battcut/
+      size: [14.5, 22]
+  _thumbcut:
+    - what: rectangle
+      where:
+        - ref: thumb_reachy
+          shift: [0.2,10.25]
+      size: [45,2]
+  _thumbcut_mirror:
+    - what: rectangle
+      where:
+        - ref: mirror_thumb_reachy
+          shift: [0.2,10.25]
+      size: [45,2]
+  _platecut:
+    - ^_keycapsbound
+    - _mcu_extra
+    - _mcu_extra_mirror
+    - -_thumbcut_mirror
+    - -_thumbcut
+  _mousebitetop:
+    - what: rectangle
+      where:
+        aggregate.parts: [mcu,mirror_mcu]
+        shift: [0,-10]
+      size: [2.6,5]
+  _mousebitetoparc:
+    - what: circle
+      where:
+        aggregate.parts: [mcu,mirror_mcu]
+        shift: [0,-7.1]
+      radius: 1
+    - what: circle
+      where:
+        aggregate.parts: [mcu,mirror_mcu]
+        shift: [0,-12.9]
+      radius: 1
+  _mouse1:
+    - name: _mousebitetop
+    - name: _mousebitetoparc
+      operation: subtract
+
   plate:
     - name: _platecut
       fillet: 2
     - name: _xiaocut
       operation: subtract
+    # - name: _mouse1
   preview:
     - ^plate
     - ^_keycapsunbound
     - ^_mountholes
+    - ^_thumbcut
+    - ^_thumbcut_mirror
+    - ^_mouse1
 
   case:
     - ^plate
@@ -362,7 +422,7 @@ pcbs.nostrumv2:
         include_tht: false
       adjust:
         shift: [-5, 4]
-        rotate: 90
+        rotate: -90
     - what: combo_diode
       where:
         - /mirror.matrix_.*/

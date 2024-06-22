@@ -1,3 +1,5 @@
+const switch_power = require('./switch_power');
+
 module.exports = {
     alps: require('./alps'),
     button: require('./button'),
@@ -23,4 +25,5 @@ module.exports = {
     xiao: require('./xiao'),
     xiao_smd: require('./xiao_smd'),
     combo_diode: require('./combo_diode'),
+    switch_power: require('./switch_power')
 }

@@ -1,11 +1,11 @@
 units:
   # capx: 17        # Key cap size horizontal
   # capy: 16        # Key cap size vertical
-  capx: 17.5   # Actual mbk size
-  capy: 16.5   # Actual mbk size
-  thumbcapx: 26.5 # Actual mbk 1.5u length
-  kx: cx + 0.5    # Key spacing horizontal
-  ky: cy + 0.5    # Key spacing vertical
+  capx: 18.1   # Actual mbk size
+  capy: 18.1   # Actual mbk size
+  thumbcapx: 27.2 # Actual mbk 1.5u length
+  kx: u + 0.5    # Key spacing horizontal
+  ky: u + 0.5    # Key spacing vertical
   pinky_splay: 3  # Degrees of splay between pinky and ring columns
   pinky_adj: -10   # Adjustment to compensate for splay spacing
   ring_splay: 3
@@ -17,7 +17,7 @@ units:
   xiao_y: 21
   outx: 0.5capx +1  # Used for plate outlines
   outy: 0.5capy +1  # Used for plate outlines
-  mirshift: 31
+  mirshift: 31.3
 
 points:
   zones:
@@ -31,8 +31,8 @@ points:
     key:
       width: capx
       height: capy
-      spread: cx      
-      padding: cy
+      spread: u      
+      padding: u
       autobind: false
     rows:
       bottom:
@@ -58,7 +58,7 @@ points:
             home:
               bind: [1, 1.5, 0, 1]
             top:
-              bind: [1, 2, 0, 1]
+              bind: [1, 1, 1, 1]
       ring:
         key:
           column_net: C1
@@ -68,11 +68,11 @@ points:
           origin: [0, pinky_adj]
         rows:
           bottom:
-            bind: [1,1.5,11.9,0]
+            bind: [1,1.5,11.9,1]
           home:
-            bind: [1,1.5,0,1]
-          top.:
-            ind: [1,2,1,1]
+            bind: [1,1.5,0,5]
+          top:
+            bind: [1,2,1,1.5]
       middle:
         key:
           column_net: C2
@@ -82,11 +82,11 @@ points:
           origin: [0, ring_adj]
         rows:
           bottom:
-            bind: [1,1,17.1,0]
+            bind: [1,1,17.1,2]
           home:
-            bind: [1,1,0,1]
+            bind: [1,1,0,2]
           top:
-            bind: [1,1,0,1]
+            bind: [1,1,0,1.6]
       index:
         key:
           column_net: C3
@@ -113,11 +113,11 @@ points:
           home:
             row_net: R0
             mirror.row_net: MR0
-            bind: [1,2,20,1]
+            bind: [1,2,21,1]
   zones.thumb:
     anchor:
       ref: matrix_index_top
-      shift: [0.6u,-57]
+      shift: [0.6u,-63]
       rotate: -20
     mirror:
       ref: matrix_inner_home
@@ -138,7 +138,7 @@ points:
         mirror.column_net: MC4
       right.key:
         spread: kx+0.2
-        stagger: 0.225kx
+        stagger: 0.19kx
         rotate: -95
         name: thumb_reachy
         bind: [1,1,2,1.2191] # R,D,L,U
@@ -167,23 +167,20 @@ points:
         rotate: 0
     key:
       name: pcm12
-      height: 6.7
-      width: 2.6
+      height: 2.6
+      width: 6.7
     mirror:
       ref: matrix_inner_home
       shift: mirshift
   # Reset switch
   zones.reset:
     anchor:
-      - ref: matrix_inner_bottom
-        shift: [0, -0.9cy]
+      - ref: mcu
+        shift: [0, -0.8xiao_y]    
     key:
       name: reset
       height: 3
       width: 2.5
-    mirror:
-      ref: matrix_inner_home
-      shift: mirshift
 
   # Mounting Holes
   zones.mount_tl:
@@ -241,44 +238,29 @@ points:
     mirror:
       ref: matrix_inner_home
       shift: mirshift
-
-  # Battery cutout
+  zones.xiaocut:
+    anchor:
+      - ref: mcu
+        rotate: 0
+        shift: [-0.0capy,.5]
+    mirror: 
+      ref: matrix_inner_home
+      shift: mirshift
+    key:
+      name: xiaocut
+      height: xiao_y + 1
+      width: 13
   zones.battcut:
     anchor:
       - ref: mcu
-        shift: [-4, -18]
+        shift: [-1, -24]
     mirror:
       ref: matrix_inner_home
       shift: mirshift
     key:
       name: battcut
-      height: 30
-      width: 20
-
-  # Solder Pads Battery
-  zones.batpos:
-    anchor:
-      - ref: mcu
-        shift: [ 1, -1.8xiao_y]
-    mirror:
-      ref: matrix_inner_home
-      shift: mirshift
-    key:
-      name: batpos
-      height: 2
-      width: 1
-  zones.batneg:
-    anchor:
-      - ref: mcu
-        shift: [ 4, -1.8xiao_y]
-    mirror:
-      ref: matrix_inner_home
-      shift: mirshift
-    key:
-      name: batneg
-      height: 2
-      width: 1
-      
+      height: 22
+      width: 12.2
 
 
 outlines:
@@ -334,7 +316,7 @@ outlines:
         - ref: matrix_inner_home
           shift: [30, 0.5capy+1]
         - ref: thumb_reachy
-          shift: [-17,0]
+          shift: [-15,0]
           affect: y
         - ref: thumb_reachy
           orient: -95
@@ -352,7 +334,7 @@ outlines:
         - ref: mirror_matrix_inner_home
           shift: [30, 0.5capy+1]
         - ref: mirror_thumb_reachy
-          shift: [-17,0]
+          shift: [-15,0]
           affect: y
         - ref: mirror_thumb_reachy
           orient: -95
@@ -375,14 +357,14 @@ outlines:
     - what: rectangle
       where:
         - ref: thumb_reachy
-          shift: [-1,9.25]
-      size: [45,1]
+          shift: [1,11]
+      size: [45,2]
   _thumbcut_mirror:
     - what: rectangle
       where:
         - ref: mirror_thumb_reachy
-          shift: [-1,9.25]
-      size: [45,1]
+          shift: [1,11]
+      size: [45,2]
   _platecut:
     - ^_keycapsbound
     - _mcu_extra
@@ -414,10 +396,6 @@ outlines:
     - what: rectangle
       where: /pcm12/
       size: [2.6,6.2]
-  _resethole:
-    - what: circle
-      where: reset
-      radius: 1
 
   plate:
     - name: _platecut
@@ -434,10 +412,6 @@ outlines:
     - ^_thumbcut
     - ^_thumbcut_mirror
     - ^_powerslider
-    - ^_resethole
-  bottom:
-    - ^plate
-    - ^_resethole
 
   case:
     - ^plate
@@ -448,7 +422,7 @@ outlines:
   #  - ^plate
   # - ^testplate
 
-pcbs.nostrumX3:
+pcbs.nostrumX:
   outlines.main:
     outline: plate
   footprints:
@@ -513,80 +487,23 @@ pcbs.nostrumX3:
         mirror.GND: MGND
         mirror.RAW3V3: MRAW3V3
         mirror.RAW5V: MRAW5V
-        mirror.SWDCLK: MSWDCLK
-        mirror.SWDIO: MSWDIO
-        mirror.VIN: MVIN
-        mirror.RST: MRST
     - what: switch_power
       where:
         - /^pcm12/
       params:
         from: pos
-        to: VIN
+        to: RAW
         side: F
     - what: switch_power
       where:
         - /mirror.pcm12/
       params:
-        from: Mpos
-        to: MVIN
+        from: pos
+        to: RAW
         side: F
       adjust.rotate: 180
-    - what: button
-      where: 
-        - /^reset/
-      params:
-        side: B
-        from: RST
-        to: GND
-    - what: button
-      where: 
-        - /mirror.reset/
-      params:
-        side: B
-        from: MRST
-        to: MGND
-    - what: pad
-      where: 
-        - /^batpos/
-      params:
-        width: 1
-        height: 2
-        front: false
-        back: true
-        text: '+'
-        align: 'left'
-        net: pos
-    - what: pad
-      where: 
-        - /^batneg/
-      params:
-        width: 1
-        height: 2
-        front: false
-        back: true
-        text: 'gnd'
-        align: 'left'
-        net: GND
-    - what: pad
-      where: 
-        - /mirror.batpos/
-      params:
-        width: 1
-        height: 2
-        front: false
-        back: true
-        text: '+'
-        align: 'left'
-        net: Mpos
-    - what: pad
-      where: 
-        - /mirror.batneg/
-      params:
-        width: 1
-        height: 2
-        front: false
-        back: true
-        text: 'gnd'
-        align: 'left'
-        net: MGND
+    # - what: via
+    #   where:
+    #     - /mount.*/
+    #   params:
+    #     net: ""

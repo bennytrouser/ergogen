@@ -1,6 +1,4 @@
 units:
-  # capx: 17        # Key cap size horizontal
-  # capy: 16        # Key cap size vertical
   capx: 17.5   # Actual mbk size
   capy: 16.5   # Actual mbk size
   thumbcapx: 26.5 # Actual mbk 1.5u length
@@ -20,6 +18,7 @@ units:
   mirshift: 31
 
 points:
+  # Key Zones
   zones:
   zones.matrix:
     anchor:
@@ -33,7 +32,6 @@ points:
       height: capy
       spread: cx      
       padding: cy
-      autobind: false
     rows:
       bottom:
         row_net: R2
@@ -125,7 +123,6 @@ points:
     key:
       width: capx
       height: capy
-      autobind: false
     rows:
       home:
         row_net: R2
@@ -145,6 +142,8 @@ points:
         column_net: C5
         mirror.column_net: MC5
 
+  # Components Zones
+
   # MCU
   zones.mcu:
     anchor:
@@ -158,7 +157,7 @@ points:
       name: mcu
       width: xiao_x+1
       height: xiao_y+1
-      autobind: false
+
   # Power slider
   zones.pcm12:
     anchor:
@@ -172,6 +171,7 @@ points:
     mirror:
       ref: matrix_inner_home
       shift: mirshift
+
   # Reset switch
   zones.reset:
     anchor:
@@ -242,20 +242,20 @@ points:
       ref: matrix_inner_home
       shift: mirshift
 
-  # Battery cutout
-  zones.battcut:
-    anchor:
-      - ref: mcu
-        shift: [-4, -18]
-    mirror:
-      ref: matrix_inner_home
-      shift: mirshift
-    key:
-      name: battcut
-      height: 30
-      width: 20
+  # # Battery cutout (Experiment for making cutout for battery in the PCB instead of under with tented case)
+  # zones.battcut:
+  #   anchor:
+  #     - ref: mcu
+  #       shift: [-4, -18]
+  #   mirror:
+  #     ref: matrix_inner_home
+  #     shift: mirshift
+  #   key:
+  #     name: battcut
+  #     height: 30
+  #     width: 20
 
-  # Solder Pads Battery
+  # Solder Pads for Battery
   zones.batpos:
     anchor:
       - ref: mcu
@@ -280,8 +280,8 @@ points:
       width: 1
       
 
-
 outlines:
+  # Cutouts for case/Keyplate
   _casecuts:
     - what: rectangle
       where:
@@ -289,6 +289,8 @@ outlines:
         - /thumb_.*/
       size: [ 13.85, 13.85]
       bound: false
+
+  # Used for making the pcb outline from keys using bind
   _keycapsbound:
     - what: rectangle
       where:
@@ -301,6 +303,8 @@ outlines:
         - /thumb_reachy/
       size: [thumbcapx, 1capy]
       bound: true
+  
+  # Used for visualising layout in preview
   _keycapsunbound:
     - what: rectangle
       where:
@@ -324,6 +328,8 @@ outlines:
       where: /mcu/
       size: [xiao_x, xiao_y]
       fillet: 1
+
+  # Janky way of adding the shape around the mcu to meet the thumb outline   
   _mcu_extra:
     - what: polygon
       bound: true
@@ -360,73 +366,52 @@ outlines:
         - ref: mirror_thumb_reachy
           orient: -95
           shift: 10
-  _mountholes:
-    - what: circle
-      where: /mount.*/
-      radius: 1.55
-  _xiaocut:
-    - what: rectangle
-      where: /xiaocut/
-      size: [13,xiao_y +1]
-    - what: rectangle
-      where: /battcut/
-      size: [12.2, 22]
+  
+  # Small shape to remove slight overhangs from jank and make the edge cuts work (there are probably better ways to do this)
   _thumbcut:
     - what: rectangle
       where:
         - ref: thumb_reachy
-          shift: [-1,9.25]
+          shift: [-1,9.7]
       size: [45,1]
   _thumbcut_mirror:
     - what: rectangle
       where:
         - ref: mirror_thumb_reachy
-          shift: [-1,9.25]
+          shift: [-1,9.7]
       size: [45,1]
+
+  _mountholes:
+    - what: circle
+      where: /mount.*/
+      radius: 1.55
+
+  _powerslider:
+    - what: rectangle
+      where: /pcm12/
+      size: [2.6,6.2]
+
+  _resethole:
+    - what: circle
+      where: reset
+      radius: 1
+
+  # Define the plate ready for fillet
   _platecut:
     - ^_keycapsbound
     - _mcu_extra
     - _mcu_extra_mirror
     - -_thumbcut_mirror
     - -_thumbcut
-  _mousebitetop:
-    - what: rectangle
-      where:
-        aggregate.parts: [mcu,mirror_mcu]
-        shift: [0,-10]
-      size: [2.6,5]
-  _mousebitetoparc:
-    - what: circle
-      where:
-        aggregate.parts: [mcu,mirror_mcu]
-        shift: [0,-7.1]
-      radius: 1
-    - what: circle
-      where:
-        aggregate.parts: [mcu,mirror_mcu]
-        shift: [0,-12.9]
-      radius: 1
-  _mouse1:
-    - name: _mousebitetop
-    - name: _mousebitetoparc
-      operation: subtract
-  _powerslider:
-    - what: rectangle
-      where: /pcm12/
-      size: [2.6,6.2]
-  _resethole:
-    - what: circle
-      where: reset
-      radius: 1
 
+  # Filleted Plate for PCB
   plate:
     - name: _platecut
       fillet: 2
     - name: _mountholes
       operation: subtract
-    #- name: _xiaocut
-    # operation: subtract
-    # - name: _mouse1
+
+  # GUI visualisation
   preview:
     - ^plate
     - ^_keycapsunbound
@@ -435,20 +420,19 @@ outlines:
     - ^_thumbcut_mirror
     - ^_powerslider
     - ^_resethole
-  bottom:
+
+  # Case dxf for bottom part
+  Case_bottom:
     - ^plate
     - ^_resethole
-
-  case:
+  # DXF for top half of case
+  Case_top:
     - ^plate
     - ^_casecuts
     - ^_mcu
     - ^_mountholes
-  # testfull:
-  #  - ^plate
-  # - ^testplate
 
-pcbs.nostrumX3:
+pcbs.nostrumX4:
   outlines.main:
     outline: plate
   footprints:

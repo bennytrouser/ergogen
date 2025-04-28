@@ -2,6 +2,7 @@
 module.exports = {
     params: {
         class: 'MCU',
+        designator: 'MCU',
         side:  'F',
         VIN: {type: 'net', value: 'VIN'},
         SWDIO: {type: 'net', value: 'SWDIO'},

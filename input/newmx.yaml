@@ -1,0 +1,282 @@
+units:
+  capx: 18.1   # Actual mbk size
+  capy: 18.1   # Actual mbk size
+  thumbcapx: 27.2 # Actual mbk 1.5u length
+  kx: u + 0.5    # Key spacing horizontal
+  ky: u + 0.5    # Key spacing vertical
+  pinky_splay: 3  # Degrees of splay between pinky and ring columns
+  pinky_adj: -10   # Adjustment to compensate for splay spacing
+  ring_splay: 3
+  ring_adj: -8
+  xiao_x: 17.5
+  xiao_y: 21
+  mirshift: 36 
+
+points:
+  zones.matrix:
+    anchor:
+      shift: [100,-100]
+      rotate: -0
+    mirror:
+      ref: matrix_inner_home
+      shift: mirshift
+    key:
+      width: capx
+      height: capy
+      spread: u      
+      padding: u
+    rows:
+      bottom:
+        row_net: R2
+        mirror.row_net: MR2
+        bind: [1, 50, 2, 2]
+      home:
+        row_net: R1
+        mirror.row_net: MR1
+        bind: [1, 1.5, 0, 2]
+      top:
+        row_net: R0
+        mirror.row_net: MR0
+        bind: [1, 2, 0, 2]
+    columns:
+      pinky:
+        key:
+          column_net: C0
+          mirror.column_net: MC0
+          rows:
+      ring:
+        key:
+          column_net: C1
+          mirror.column_net: MC1
+          stagger: 0.65U
+          origin: [0, pinky_adj]
+      middle:
+        key:
+          column_net: C2
+          mirror.column_net: MC2
+          stagger: 0.25U
+          origin: [0, ring_adj]
+        rows:
+          bottom:
+            bind: [1,1,1,2]
+          home:
+            bind: [1,1,0,2]
+          top:
+            bind: [2,40,0,40]
+      index:
+        key:
+          column_net: C3
+          mirror.column_net: MC3
+          stagger: -0.25U
+        rows:
+          bottom:
+            bind: [1,1,9,1]
+          home:
+            bind: [1,1,0,1]
+          top:
+            bind: [1,1,0,1]
+      inner:
+        key:
+          column_net: C4
+          mirror.column_net: MC4
+          stagger: 0.5ky
+        rows:
+          top.skip: true
+          bottom:
+            row_net: R1
+            mirror.row_net: MR1
+            bind: [1,2,22,1]
+          home:
+            row_net: R0
+            mirror.row_net: MR0
+            bind: [1,2,1,1]
+  zones.thumb:
+    anchor:
+      ref: matrix_index_top
+      shift: [0.6u,-63]
+      rotate: -6
+    mirror:
+      ref: matrix_inner_home
+      shift: mirshift
+    key:
+      width: capx
+      height: capy
+      spread: u
+      autobind: 0
+    rows:
+      home:
+        row_net: R2
+        mirror.row_net: MR2
+    columns:
+      left.key:
+        name: thumb_tucky
+        bind: [0,3,2,2] # U,R,D,L
+        column_net: C4
+        mirror.column_net: MC4
+      right.key:
+        name: thumb_reachy
+        bind: [2,2,2,1] 
+        column_net: C5
+        mirror.column_net: MC5
+
+  zones.mcu:
+    anchor:
+      ref: matrix_pinky_top
+      shift: [1,0.95u]
+      rotate: -90
+    mirror: 
+      ref: matrix_inner_home
+      shift: mirshift
+    key:
+      name: mcu
+      width: xiao_x+1
+      height: xiao_y+1
+      autobind: 0
+
+outlines:
+  _casecuts:
+    - what: rectangle
+      where:
+        - /matrix_.*/
+        - /thumb_.*/
+      size: 14
+      bound: false
+  _keycapsbound:
+    - what: rectangle
+      where:
+        - /matrix_.*/
+        - /thumb_tucky/
+        - /thumb_reachy/
+      size: [capx, capy]
+      bound: true
+  _keycapsunbound:
+    - what: rectangle
+      where:
+        - /matrix_.*/
+        - /thumb_tucky/
+        - /thumb_reachy/
+      size: [capx, capy]
+      bound: false
+  _mcu:
+    - what: rectangle
+      where: /mcu/
+      size: [xiao_x, xiao_y]
+      fillet: 1
+  preview:
+    - ^_keycapsbound
+    - ^_keycapsunbound
+    - ^_mcu
+  roundedpreview:
+    - name: preview
+      fillet: 2
+  plate:
+    - name: _keycapsbound
+      fillet: 2
+  keywells:
+    - name: _keycapsunbound
+      expand: 1
+      fillet: 1
+  casesketch: 
+    - name: _keycapsbound
+      expand: 3>
+      fillet: 2
+    - name: _casecuts
+      operation: subtract
+    - name: keywells
+      operation: stack
+
+
+
+
+pcbs.mxNostrum:
+  outlines.main:
+    outline: plate
+  footprints:
+    - what: mx
+      where:
+        - /matrix_.*/
+        - /thumb_.*/
+      adjust.rotate: 180
+      params:
+        from: "x"
+        to: "x"
+        reverse: false
+        hotswap: true
+#         solder: true
+    - what: combo_diode
+      where:
+        - /^matrix_.*/
+        - /^thumb_.*/
+      params:
+        from: "x"
+        to: "x"
+        include_tht: false
+      adjust:
+        shift: [-5, 4]
+        rotate: -90
+    - what: combo_diode
+      where:
+        - /mirror.matrix_.*/
+        - /mirror.thumb_.*/
+      params:
+        include_tht: false
+        from: "x"
+        to: "x"
+      adjust:
+        shift: [5, 4]
+        rotate: 90
+    - what: xiao_smd
+      where:
+        - /^mcu*/
+      params:
+        side: F
+        designator: MCU1
+    - what: xiao_smd
+      where:
+        - /mirror.mcu*/
+      params:
+        side: F
+        designator: MCU2
+#         P0: R0
+#         P1: R1
+#         P2: R2
+#         P3: C0
+#         P4: C1
+#         P5: C2
+#         P6: C3
+#         P7: C4
+#         P8: C5
+#         mirror.P0: P0
+#         mirror.P1: P1
+#         mirror.P2: MC5
+#         mirror.P3: MC4
+#         mirror.P4: MC3
+#         mirror.P5: MC2
+#         mirror.P6: MC1
+#         mirror.P7: MC0
+#         mirror.P8: MR2
+#         mirror.P9: MR1
+#         mirror.P10: MR0
+#         mirror.GND: MGND
+#         mirror.RAW3V3: MRAW3V3
+#         mirror.RAW5V: MRAW5V
+#     - what: switch_power
+#       where:
+#         - /^pcm12/
+#       params:
+#         from: pos
+#         to: RAW
+#         side: F
+#     - what: switch_power
+#       where:
+#         - /mirror.pcm12/
+#       params:
+#         from: pos
+#         to: RAW
+#         side: F
+#       adjust.rotate: 180
+    # - what: via
+    #   where:
+    #     - /mount.*/
+    #   params:
+    #     net: ""
